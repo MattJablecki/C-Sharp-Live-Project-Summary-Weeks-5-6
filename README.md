@@ -56,4 +56,31 @@ This locked the dummy list item in position, disabling the sortable property and
        var myJsonString = JSON.stringify(buildObj(idarray, valuearray));
 
 
-TO BE CONTINUED
+Once the data was converted to JSON data, I then sent the data to the controller using an AJAX call triggered by clicking the submit button:
+
+           $.ajax({
+                type: "POST",
+                url: "/Schedules/GetData",
+                datatype: "JSON",
+                data: {
+                    namesArr: myJsonString,
+                    weeks: week
+                },
+            });
+            
+The JSON string, when passed to the controller, then needed to be parsed in order to convert it back to an array. In order to do so, I first needed to identify and remove any unnecessary characters from the string:
+
+            char[] myChar = { '[', ']' };
+            string newEmployee = employees.Trim(myChar);
+            
+With the characters removed, I then identified the point at which each item in the string starts/ends and assigned it back to an array:
+
+            string[] employeeList = newEmployee.Split(',');
+            var listEmployees = employeeList.ToList<string>();
+            
+Similarly, I had to separate the JSON string containing the date range and parse it to assign values for a schedule's start date and end date:
+
+            string[] stringSeperator = new string[] {"to"};          
+            string[] dateRange = weeks.Split(stringSeperator, StringSplitOptions.None);
+            string startDate = dateRange[0];
+            string endDate = dateRange[1];            
